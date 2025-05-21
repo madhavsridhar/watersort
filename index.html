@@ -166,6 +166,23 @@
       margin: 0;
     }
 
+    .tube-label {
+        text-align: center;
+        color: #bbb;
+        font-size: 1.1em;
+        font-family: 'DM Mono', monospace;
+        margin-top: 2px;
+        user-select: none;
+        pointer-events: none;
+        letter-spacing: 1px;
+    }
+
+    .tube-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
   </style>
 </head>
 
@@ -213,6 +230,7 @@
   
 
   <script>
+    let game = null; // Make game variable global
     class WaterSortGame {
       constructor(tubeCount = 8) {
         this.tubeCount = tubeCount;
@@ -307,6 +325,13 @@ render() {
 
     // Add tubes to rows
     this.tubes.forEach((tube, index) => {
+        // Create a container for tube and label
+        const tubeContainer = document.createElement('div');
+        tubeContainer.className = 'tube-container';
+        tubeContainer.style.display = 'flex';
+        tubeContainer.style.flexDirection = 'column';
+        tubeContainer.style.alignItems = 'center';
+
         const tubeEl = document.createElement('div');
         tubeEl.className = 'tube';
         tubeEl.dataset.index = index; // Store index for identification
@@ -321,10 +346,18 @@ render() {
             tubeEl.appendChild(liquidEl);
         });
 
+        // Add label below the tube
+        const label = document.createElement('div');
+        label.className = 'tube-label';
+        label.textContent = String.fromCharCode('a'.charCodeAt(0) + index);
+
+        tubeContainer.appendChild(tubeEl);
+        tubeContainer.appendChild(label);
+
         if (index < row1Count) {
-            row1.appendChild(tubeEl);
+            row1.appendChild(tubeContainer);
         } else {
-            row2.appendChild(tubeEl);
+            row2.appendChild(tubeContainer);
         }
     });
 
@@ -481,37 +514,30 @@ handleTubeClick(index) {
 
 // game.render();
 
-    document.getElementById('start-btn').addEventListener('click', () => 
-    {console.log('hi');
-      
-      const randomTubeCount = () => {
-        console.log('helo');
-        //Math.floor(Math.random() * (14 - 8 + 1)) + 8; // Random number between 8 and 14
-      };
-      const game = new WaterSortGame(randomTubeCount);
-      game.render()
+    document.getElementById('start-btn').addEventListener('click', () => {
+        // Generate a random number for tube count
+        const randomTubeCount = () => {
+            return Math.floor(Math.random() * (14 - 8 + 1)) + 8; // Random number between 8 and 14
+        };
+        game = new WaterSortGame(randomTubeCount());
+        game.render();
+        document.getElementById('undo-btn').addEventListener('click', () => game.undo());
+        document.getElementById('reset-btn').addEventListener('click', () => game.reset());
+        document.getElementById('end-btn').addEventListener('click', () => game.end());
     });
 
-    document.getElementById('start-btn').addEventListener('click', () => {
-    console.log('hi');
-    
-    // Generate a random number for tube count
-    const randomTubeCount = () => {
-        console.log('helo');
-        return Math.floor(Math.random() * (14 - 8 + 1)) + 8; // Random number between 8 and 14
-    };
-
-    // Initialize the game with the random tube count
-    const game = new WaterSortGame(randomTubeCount());
-    game.render();
-
-    document.getElementById('undo-btn').addEventListener('click', () => game.undo());
-    document.getElementById('reset-btn').addEventListener('click', () => game.reset());
-    document.getElementById('end-btn').addEventListener('click', () => game.end());
-});
-
-
-
+    // Keyboard controls: a -> 0, b -> 1, ...
+    document.addEventListener('keydown', (event) => {
+        if (!game) return;
+        const key = event.key.toLowerCase();
+        // Only allow a-z
+        if (key.length === 1 && key >= 'a' && key <= 'z') {
+            const index = key.charCodeAt(0) - 'a'.charCodeAt(0);
+            if (index < game.tubes.length) {
+                game.handleTubeClick(index);
+            }
+        }
+    });
 
   </script>
 </body>
