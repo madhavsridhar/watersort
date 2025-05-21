@@ -1,0 +1,16 @@
+{
+    "name": "Water Sort Puzzle",
+    "short_name": "WaterSort",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#f0f0f0",
+    "theme_color": "#4CAF50",
+    "icons": [
+      {
+        "src": "apple-touch-icon.png",
+        "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
